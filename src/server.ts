@@ -10,45 +10,44 @@ import postsRoutes from './routes/usersRoutes';
 import eventRoutes from './routes/eventRoutes';
 
 class Server {
-    public app: express.Application;
+  public app: express.Application;
 
-    //The contructor will be the first code that is executed when an instance of the class is declared.
-    constructor(){
-        this.app = express();
-        this.config();
-        this.routes();
-    }
+  constructor() {
+    this.app = express();
+    this.config();
+    this.routes();
+  }
 
-    config() {
-        //MongoDB settings
-        const MONGO_URI = 'mongodb://localhost/tsapi';
-        mongoose.connect(MONGO_URI || process.env.MONGODB_URL)
-        .then(db => console.log("DB is connected"));
+  config() {
+    // MongoDB settings
+    const MONGO_URI = 'mongodb://localhost/tsapi';
+    mongoose.connect(MONGO_URI || process.env.MONGODB_URL)
+      .then(() => console.log('DB is connected'));
 
-        //Settings
-        this.app.set('port', process.env.PORT || 3000); 
+    // Settings
+    this.app.set('port', process.env.PORT || 3000);
 
-        //Middlewares
-        this.app.use(morgan('dev')); //Allows to see by console the petitions that eventually arrive.
-        this.app.use(express.json()); //So that Express parses JSON as the body structure, as it doens't by default.
-        this.app.use(express.urlencoded({extended:false}));
-        this.app.use(helmet()); //Offers automatically security in front of some cracking attacks.
-        this.app.use(compression()); //Allows to send the data back in a compressed format.
-        this.app.use(cors()); //It automatically configures and leads with CORS issues and configurations.
-    }
+    // Middlewares
+    this.app.use(morgan('dev'));
+    this.app.use(express.json());
+    this.app.use(express.urlencoded({ extended: false }));
+    this.app.use(helmet());
+    this.app.use(compression());
+    this.app.use(cors());
+  }
 
-    routes() {
-        this.app.use(indexRoutes);
-        this.app.use('/api/users', postsRoutes);
-        this.app.use('/api/events', eventRoutes);
-    }
+  routes() {
+    this.app.use(indexRoutes);
+    this.app.use('/api/users', postsRoutes);
+    this.app.use('/api/events', eventRoutes);
+  }
 
-    start() {
-        this.app.listen(this.app.get('port'), () =>{
-            console.log ('Server listening on port', this.app.get('port'));
-        });
-    }
+  start() {
+    this.app.listen(this.app.get('port'), () => {
+      console.log('Server listening on port', this.app.get('port'));
+    });
+  }
 }
 
-const server = new Server(); 
+const server = new Server();
 server.start();
